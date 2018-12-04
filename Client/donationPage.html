@@ -1,0 +1,72 @@
+<script src="https://checkout.stripe.com/checkout.js"></script>
+
+<form id="myForm" action="http://localhost:56392/donation" method="POST">
+
+  First name:<br>
+  <input type="text" name="firstname"><br>
+  Last name:<br>
+  <input type="text" name="lastname"><br>
+  Email:<br>
+  <input type="text" id="email" name = "email"><br><br>
+
+<input type="radio" id="amount10" name="amount" value="10" checked>$10<br>
+  <input type="radio" id="amount20" name="amount" value="20">$20<br>
+  <input type="radio" id="amountOther" name="amount" value="other">Other
+  <input type="text" id="textOther" name = "textOther">
+<button id="customButton">Purchase</button>
+<input type="hidden" id="token" name ="token">
+</form>
+
+<script>
+
+function GetValue() {
+	donation = 0;
+	if (document.getElementById('amount10').checked) {
+	  donation = document.getElementById('amount10').value;
+	}
+
+	if (document.getElementById('amount20').checked) {
+	  donation = document.getElementById('amount20').value;
+	}
+	if (document.getElementById('amountOther').checked) {
+	  donation = document.getElementById('textOther').value;
+	}
+
+	return donation * 100; //stripe wants the value in cents/pence
+}
+
+function GetEmail() {
+	 return document.getElementById('email').value;
+}
+
+var handler = StripeCheckout.configure({
+  key: 'pk_test_IzFm5KXqEuv1OMY1JMZOwxsw',
+  image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+  locale: 'auto',
+  token: function(token) {
+    // You can access the token ID with `token.id`.
+    // Get the token ID to your server-side code for use.
+	document.getElementById('token').value = token.id;
+  },
+  closed:function() {
+	document.getElementById("myForm").submit();
+  }
+});
+
+document.getElementById('customButton').addEventListener('click', function(e) {
+  // Open Checkout with further options:
+  handler.open({
+    name: 'Zeidman Development',
+    description: 'Generous Donation',
+    zipCode: true,
+    amount: GetValue(),
+	email: GetEmail()
+  });
+  e.preventDefault();
+});
+
+// Close Checkout on page navigation:
+window.addEventListener('popstate', function() {
+  handler.close();  
+});
+</script>
