@@ -184,7 +184,7 @@ namespace SimpleDonation.Controllers
         private string ConstructGift(DonationDTO formData, string id)
         {
 
-            //The Stripe amount was in cents/pence. We need to convert that back to a value with decimals
+            //As previously if the TextOther field is null we use the amount value otherwise the TextOther value. 
             double amount = 0;
             if (formData.TextOther == null)
                 amount = double.Parse(formData.Amount);
